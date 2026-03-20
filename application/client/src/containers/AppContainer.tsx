@@ -1,10 +1,8 @@
-import { useCallback, useEffect, useId, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useId, useState } from "react";
 import { Helmet, HelmetProvider } from "react-helmet";
 import { Route, Routes, useLocation, useNavigate } from "react-router";
-
 import { AppPage } from "@web-speed-hackathon-2026/client/src/components/application/AppPage";
 import { AuthModalContainer } from "@web-speed-hackathon-2026/client/src/containers/AuthModalContainer";
-import { CrokContainer } from "@web-speed-hackathon-2026/client/src/containers/CrokContainer";
 import { DirectMessageContainer } from "@web-speed-hackathon-2026/client/src/containers/DirectMessageContainer";
 import { DirectMessageListContainer } from "@web-speed-hackathon-2026/client/src/containers/DirectMessageListContainer";
 import { NewPostModalContainer } from "@web-speed-hackathon-2026/client/src/containers/NewPostModalContainer";
@@ -16,13 +14,18 @@ import { TimelineContainer } from "@web-speed-hackathon-2026/client/src/containe
 import { UserProfileContainer } from "@web-speed-hackathon-2026/client/src/containers/UserProfileContainer";
 import { fetchJSON, sendJSON } from "@web-speed-hackathon-2026/client/src/utils/fetchers";
 
+const CrokContainer = lazy(() =>
+  import("@web-speed-hackathon-2026/client/src/containers/CrokContainer").then((m) => ({
+    default: m.CrokContainer,
+  })),
+);
+
 export const AppContainer = () => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-
   const [activeUser, setActiveUser] = useState<Models.User | null>(null);
   const [isLoadingActiveUser, setIsLoadingActiveUser] = useState(true);
   useEffect(() => {
@@ -39,10 +42,8 @@ export const AppContainer = () => {
     setActiveUser(null);
     navigate("/");
   }, [navigate]);
-
   const authModalId = useId();
   const newPostModalId = useId();
-
   if (isLoadingActiveUser) {
     return (
       <HelmetProvider>
@@ -52,7 +53,6 @@ export const AppContainer = () => {
       </HelmetProvider>
     );
   }
-
   return (
     <HelmetProvider>
       <AppPage
@@ -78,13 +78,16 @@ export const AppContainer = () => {
           <Route element={<PostContainer />} path="/posts/:postId" />
           <Route element={<TermContainer />} path="/terms" />
           <Route
-            element={<CrokContainer activeUser={activeUser} authModalId={authModalId} />}
+            element={
+              <Suspense fallback={null}>
+                <CrokContainer activeUser={activeUser} authModalId={authModalId} />
+              </Suspense>
+            }
             path="/crok"
           />
           <Route element={<NotFoundContainer />} path="*" />
         </Routes>
       </AppPage>
-
       <AuthModalContainer id={authModalId} onUpdateActiveUser={setActiveUser} />
       <NewPostModalContainer id={newPostModalId} />
     </HelmetProvider>
