@@ -145,4 +145,4 @@ const config = {
 };
 
 module.exports = config;
-# cache bust 2026年  3月 20日 金曜日 13:06:16 JST
+// cache bust 1773979717
