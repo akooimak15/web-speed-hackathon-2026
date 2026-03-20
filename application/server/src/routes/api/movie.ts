@@ -11,7 +11,7 @@ import { v4 as uuidv4 } from "uuid";
 import { UPLOAD_PATH } from "@web-speed-hackathon-2026/server/src/paths";
 
 const execFileAsync = promisify(execFile);
-const EXTENSION = "gif";
+const EXTENSION = "webm";
 
 export const movieRouter = Router();
 
@@ -31,6 +31,9 @@ movieRouter.post("/movies", async (req, res) => {
     "-t", "5",
     "-r", "10",
     "-vf", "crop='min(iw,ih)':'min(iw,ih)'",
+    "-c:v", "libvpx-vp9",
+    "-crf", "33",
+    "-b:v", "0",
     "-an",
     outPath,
   ]);
