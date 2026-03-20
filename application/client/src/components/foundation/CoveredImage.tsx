@@ -29,7 +29,7 @@ export const CoveredImage = ({ src }: Props) => {
   }, [data]);
 
   const alt = useMemo(() => {
-    const exif = data != null ? load(Buffer.from(data).toString("binary")) : null;
+    const exif = (() => { try { return data != null ? load(Buffer.from(data).toString("binary")) : null; } catch { return null; } })();
     const raw = exif?.["0th"]?.[ImageIFD.ImageDescription];
     return raw != null ? new TextDecoder().decode(Buffer.from(raw, "binary")) : "";
   }, [data]);
