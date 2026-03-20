@@ -14,7 +14,6 @@ export function useInfiniteFetch<T>(
   fetcher: (apiPath: string) => Promise<T[]>,
 ): ReturnValues<T> {
   const internalRef = useRef({ isLoading: false, offset: 0 });
-
   const [result, setResult] = useState<Omit<ReturnValues<T>, "fetchMore">>({
     data: [],
     error: null,
@@ -23,24 +22,19 @@ export function useInfiniteFetch<T>(
 
   const fetchMore = useCallback(() => {
     const { isLoading, offset } = internalRef.current;
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
 
-    setResult((cur) => ({
-      ...cur,
-      isLoading: true,
-    }));
-    internalRef.current = {
-      isLoading: true,
-      offset,
-    };
+    setResult((cur) => ({ ...cur, isLoading: true }));
+    internalRef.current = { isLoading: true, offset };
 
-    void fetcher(apiPath).then(
-      (allData) => {
+    const separator = apiPath.includes("?") ? "&" : "?";
+    const url = `${apiPath}${separator}limit=${LIMIT}&offset=${offset}`;
+
+    void fetcher(url).then(
+      (data) => {
         setResult((cur) => ({
           ...cur,
-          data: [...cur.data, ...allData.slice(offset, offset + LIMIT)],
+          data: [...cur.data, ...data],
           isLoading: false,
         }));
         internalRef.current = {
@@ -49,35 +43,17 @@ export function useInfiniteFetch<T>(
         };
       },
       (error) => {
-        setResult((cur) => ({
-          ...cur,
-          error,
-          isLoading: false,
-        }));
-        internalRef.current = {
-          isLoading: false,
-          offset,
-        };
+        setResult((cur) => ({ ...cur, error, isLoading: false }));
+        internalRef.current = { isLoading: false, offset };
       },
     );
   }, [apiPath, fetcher]);
 
   useEffect(() => {
-    setResult(() => ({
-      data: [],
-      error: null,
-      isLoading: true,
-    }));
-    internalRef.current = {
-      isLoading: false,
-      offset: 0,
-    };
-
+    setResult(() => ({ data: [], error: null, isLoading: true }));
+    internalRef.current = { isLoading: false, offset: 0 };
     fetchMore();
   }, [fetchMore]);
 
-  return {
-    ...result,
-    fetchMore,
-  };
+  return { ...result, fetchMore };
 }
