@@ -1,25 +1,40 @@
+import $ from "jquery";
 import { gzip } from "pako";
 
 export async function fetchBinary(url: string): Promise<ArrayBuffer> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.arrayBuffer();
+  const result = await $.ajax({
+    async: false,
+    dataType: "binary",
+    method: "GET",
+    responseType: "arraybuffer",
+    url,
+  });
+  return result;
 }
 
 export async function fetchJSON<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  const result = await $.ajax({
+    async: false,
+    dataType: "json",
+    method: "GET",
+    url,
+  });
+  return result;
 }
 
 export async function sendFile<T>(url: string, file: File): Promise<T> {
-  const res = await fetch(url, {
+  const result = await $.ajax({
+    async: false,
+    data: file,
+    dataType: "json",
+    headers: {
+      "Content-Type": "application/octet-stream",
+    },
     method: "POST",
-    headers: { "Content-Type": "application/octet-stream" },
-    body: file,
+    processData: false,
+    url,
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  return result;
 }
 
 export async function sendJSON<T>(url: string, data: object): Promise<T> {
@@ -27,14 +42,17 @@ export async function sendJSON<T>(url: string, data: object): Promise<T> {
   const uint8Array = new TextEncoder().encode(jsonString);
   const compressed = gzip(uint8Array);
 
-  const res = await fetch(url, {
-    method: "POST",
+  const result = await $.ajax({
+    async: false,
+    data: compressed,
+    dataType: "json",
     headers: {
       "Content-Encoding": "gzip",
       "Content-Type": "application/json",
     },
-    body: compressed,
+    method: "POST",
+    processData: false,
+    url,
   });
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  return result;
 }
