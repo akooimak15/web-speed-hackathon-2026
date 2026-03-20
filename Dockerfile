@@ -23,7 +23,7 @@ COPY ./application/client/package.json ./client/package.json
 COPY ./application/server/package.json ./server/package.json
 
 # --mount を削除し、通常のインストールに変更
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --no-frozen-lockfile
 
 COPY ./application .
 

@@ -1,4 +1,5 @@
 import Express from "express";
+import compression from "compression";
 import { apiRouter } from "@web-speed-hackathon-2026/server/src/routes/api";
 import { staticRouter } from "@web-speed-hackathon-2026/server/src/routes/static";
 import { sessionMiddleware } from "@web-speed-hackathon-2026/server/src/session";
@@ -6,6 +7,7 @@ import { sessionMiddleware } from "@web-speed-hackathon-2026/server/src/session"
 export const app = Express();
 
 app.set("trust proxy", true);
+app.use(compression());
 app.use(sessionMiddleware);
 app.use(Express.json());
 app.use(Express.raw({ limit: "10mb" }));
