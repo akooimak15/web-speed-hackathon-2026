@@ -25,15 +25,18 @@ const config = {
     ],
     static: [PUBLIC_PATH, UPLOAD_PATH],
   },
-  devtool: false,
+  devtool: "inline-source-map",
   entry: {
     main: [
+      "core-js",
+      "regenerator-runtime/runtime",
+      "jquery-binarytransport",
       path.resolve(SRC_PATH, "./index.css"),
       path.resolve(SRC_PATH, "./buildinfo.ts"),
       path.resolve(SRC_PATH, "./index.tsx"),
     ],
   },
-  mode: "production",
+  mode: "none",
   module: {
     rules: [
       {
@@ -65,14 +68,16 @@ const config = {
   },
   plugins: [
     new webpack.ProvidePlugin({
+      $: "jquery",
       AudioContext: ["standardized-audio-context", "AudioContext"],
       Buffer: ["buffer", "Buffer"],
+      "window.jQuery": "jquery",
     }),
     new webpack.EnvironmentPlugin({
       BUILD_DATE: new Date().toISOString(),
       // Heroku では SOURCE_VERSION 環境変数から commit hash を参照できます
       COMMIT_HASH: process.env.SOURCE_VERSION || "",
-      NODE_ENV: "production",
+      NODE_ENV: "development",
     }),
     new MiniCssExtractPlugin({
       filename: "styles/[name].css",
@@ -125,10 +130,10 @@ const config = {
   optimization: {
     minimize: false,
     splitChunks: false,
-    concatenateModules: true,
-    usedExports: true,
-    providedExports: true,
-    sideEffects: true,
+    concatenateModules: false,
+    usedExports: false,
+    providedExports: false,
+    sideEffects: false,
   },
   cache: false,
   ignoreWarnings: [
