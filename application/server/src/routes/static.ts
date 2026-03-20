@@ -1,7 +1,6 @@
 import history from "connect-history-api-fallback";
 import { Router } from "express";
 import serveStatic from "serve-static";
-
 import {
   CLIENT_DIST_PATH,
   PUBLIC_PATH,
@@ -10,26 +9,35 @@ import {
 
 export const staticRouter = Router();
 
-// SPA 対応のため、ファイルが存在しないときに index.html を返す
-staticRouter.use(history());
-
+// アップロードファイル: 短めのキャッシュ
 staticRouter.use(
   serveStatic(UPLOAD_PATH, {
-    etag: false,
-    lastModified: false,
+    maxAge: "1h",
+    immutable: false,
   }),
 );
 
+// publicアセット: 短めのキャッシュ
 staticRouter.use(
   serveStatic(PUBLIC_PATH, {
-    etag: false,
-    lastModified: false,
+    maxAge: "1h",
+    immutable: false,
   }),
 );
 
+// ハッシュ付きビルド成果物: 永続キャッシュ
 staticRouter.use(
   serveStatic(CLIENT_DIST_PATH, {
-    etag: false,
-    lastModified: false,
+    maxAge: "1y",
+    immutable: true,
+  }),
+);
+
+// SPA fallback はキャッシュ対象外のため最後に配置
+staticRouter.use(history());
+staticRouter.use(
+  serveStatic(CLIENT_DIST_PATH, {
+    maxAge: "1y",
+    immutable: true,
   }),
 );
