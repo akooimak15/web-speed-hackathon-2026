@@ -30,7 +30,6 @@ COPY ./application .
 RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm build
 
 # --mount を削除
-RUN CI=true pnpm install --no-frozen-lockfile --prod --ignore-scripts --filter @web-speed-hackathon-2026/server
 
 FROM base
 
