@@ -90,7 +90,7 @@ export function initModels(sequelize: Sequelize) {
   User.hasMany(DirectMessageConversation, {
     as: "initiatedConversations",
     foreignKey: {
-      name: "initiatorId",
+    name: "initiatorId",
     },
   });
 
