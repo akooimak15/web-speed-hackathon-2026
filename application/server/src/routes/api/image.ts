@@ -1,36 +1,38 @@
 import { promises as fs } from "fs";
+import { tmpdir } from "os";
 import path from "path";
+import { execFile } from "child_process";
+import { promisify } from "util";
 
 import { Router } from "express";
-import { fileTypeFromBuffer } from "file-type";
 import httpErrors from "http-errors";
 import { v4 as uuidv4 } from "uuid";
 
 import { UPLOAD_PATH } from "@web-speed-hackathon-2026/server/src/paths";
 
-// 変換した画像の拡張子
+const execFileAsync = promisify(execFile);
 const EXTENSION = "jpg";
 
 export const imageRouter = Router();
 
 imageRouter.post("/images", async (req, res) => {
-  if (req.session.userId === undefined) {
-    throw new httpErrors.Unauthorized();
-  }
-  if (Buffer.isBuffer(req.body) === false) {
-    throw new httpErrors.BadRequest();
-  }
-
-  const type = await fileTypeFromBuffer(req.body);
-  if (type === undefined || type.ext !== EXTENSION) {
-    throw new httpErrors.BadRequest("Invalid file type");
-  }
+  if (req.session.userId === undefined) throw new httpErrors.Unauthorized();
+  if (!Buffer.isBuffer(req.body)) throw new httpErrors.BadRequest();
 
   const imageId = uuidv4();
+  const tmpIn = path.join(tmpdir(), `${imageId}-in`);
+  const outPath = path.resolve(UPLOAD_PATH, `./images/${imageId}.${EXTENSION}`);
 
-  const filePath = path.resolve(UPLOAD_PATH, `./images/${imageId}.${EXTENSION}`);
   await fs.mkdir(path.resolve(UPLOAD_PATH, "images"), { recursive: true });
-  await fs.writeFile(filePath, req.body);
+  await fs.writeFile(tmpIn, req.body);
 
-  return res.status(200).type("application/json").send({ id: imageId });
+  await execFileAsync("ffmpeg", [
+    "-i", tmpIn,
+    outPath,
+    "-y",
+  ]);
+
+  await fs.unlink(tmpIn).catch(() => {});
+
+  return res.status(200).json({ id: imageId });
 });
