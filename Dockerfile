@@ -8,22 +8,29 @@ FROM node:${NODE_VERSION}-slim AS base
 LABEL fly_launch_runtime="Node.js"
 
 ENV PNPM_HOME=/pnpm
+ENV PATH="$PNPM_HOME:$PATH"
 
 WORKDIR /app
-RUN --mount=type=cache,target=/root/.npm npm install -g pnpm@${PNPM_VERSION}
+# --mount を削除しました
+RUN npm install -g pnpm@${PNPM_VERSION}
 
 FROM base AS build
 
+# アプリケーションの構成に合わせてパスを調整
 COPY ./application/package.json ./application/pnpm-lock.yaml ./application/pnpm-workspace.yaml ./
+# ワークスペース配下の package.json もコピー
 COPY ./application/client/package.json ./client/package.json
 COPY ./application/server/package.json ./server/package.json
-RUN --mount=type=cache,target=/pnpm/store pnpm install --frozen-lockfile
+
+# --mount を削除し、通常のインストールに変更
+RUN pnpm install --frozen-lockfile
 
 COPY ./application .
 
 RUN NODE_OPTIONS="--max-old-space-size=4096" pnpm build
 
-RUN --mount=type=cache,target=/pnpm/store CI=true pnpm install --frozen-lockfile --prod --filter @web-speed-hackathon-2026/server
+# --mount を削除
+RUN CI=true pnpm install --frozen-lockfile --prod --filter @web-speed-hackathon-2026/server
 
 FROM base
 
