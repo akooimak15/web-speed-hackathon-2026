@@ -1,0 +1,10 @@
+[33m2916d6a[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m Revert "fix: webpack production mode"
+[33m31e5f30[m Revert "fix3"
+[33ma15b363[m Revert "fix: replace jquery ajax with fetch"
+[33m9eb5538[m Revert "fix4"
+[33m6a231a3[m fix4
+[33mef65d34[m fix: replace jquery ajax with fetch
+[33m76ac6fe[m fix3
+[33mbc8570c[m fix: webpack production mode
+[33m48a489f[m fix2
+[33mf60fcdb[m fix
