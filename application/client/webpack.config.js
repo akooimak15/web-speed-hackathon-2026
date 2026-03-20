@@ -129,7 +129,7 @@ const config = {
   },
   optimization: {
     minimize: false,
-    splitChunks: { chunks: "all" },
+    splitChunks: false,
     concatenateModules: true,
     usedExports: true,
     providedExports: true,
