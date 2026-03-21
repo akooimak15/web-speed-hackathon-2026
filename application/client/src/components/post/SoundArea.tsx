@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { SoundPlayer } from "@web-speed-hackathon-2026/client/src/components/foundation/SoundPlayer";
 
 interface Props {
@@ -5,12 +6,29 @@ interface Props {
 }
 
 export const SoundArea = ({ sound }: Props) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        setVisible(true);
+        observer.disconnect();
+      }
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <div
-      className="border-cax-border relative h-full w-full overflow-hidden rounded-lg border"
+      ref={ref}
+      className="border-cax-border relative h-20 w-full overflow-hidden rounded-lg border"
       data-sound-area
     >
-      <SoundPlayer sound={sound} />
+      {visible && <SoundPlayer sound={sound} />}
     </div>
   );
 };
