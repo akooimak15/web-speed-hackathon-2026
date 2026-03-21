@@ -36,7 +36,7 @@ export const NavigationItem = ({ badge, href, icon, command, commandfor, text }:
             {icon}
             {badge}
           </span>
-          <span className="hidden sm:inline sm:text-sm lg:text-xl lg:font-bold">{text}</span>
+          <span className="sr-only sm:not-sr-only sm:text-sm lg:text-xl lg:font-bold">{text}</span>
         </Link>
       ) : (
         <button
@@ -49,7 +49,7 @@ export const NavigationItem = ({ badge, href, icon, command, commandfor, text }:
             {icon}
             {badge}
           </span>
-          <span className="hidden sm:inline sm:text-sm lg:text-xl lg:font-bold">{text}</span>
+          <span className="sr-only sm:not-sr-only sm:text-sm lg:text-xl lg:font-bold">{text}</span>
         </button>
       )}
     </li>
