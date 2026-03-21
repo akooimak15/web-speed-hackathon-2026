@@ -60,7 +60,7 @@ const config = {
   },
   output: {
     chunkFilename: "scripts/chunk-[contenthash].js",
-    chunkFormat: false,
+    
     filename: "scripts/[name].js",
     path: DIST_PATH,
     publicPath: "auto",
@@ -90,7 +90,7 @@ const config = {
       ],
     }),
     new HtmlWebpackPlugin({
-      inject: false,
+      inject: true,
       template: path.resolve(SRC_PATH, "./index.html"),
     }),
   ],
@@ -128,7 +128,7 @@ const config = {
   },
   optimization: {
     minimize: true,
-    splitChunks: false,
+    splitChunks: { chunks: "all" },
     concatenateModules: true,
     usedExports: true,
     providedExports: true,
