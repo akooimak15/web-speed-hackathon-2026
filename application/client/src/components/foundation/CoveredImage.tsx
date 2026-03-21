@@ -6,9 +6,10 @@ import { Modal } from "@web-speed-hackathon-2026/client/src/components/modal/Mod
 interface Props {
   src: string;
   alt?: string;
+  priority?: boolean;
 }
 
-export const CoveredImage = ({ src, alt = "" }: Props) => {
+export const CoveredImage = ({ src, alt = "", priority = false }: Props) => {
   const dialogId = useId();
   const handleDialogClick = useCallback((ev: MouseEvent<HTMLDialogElement>) => {
     ev.stopPropagation();
@@ -20,14 +21,16 @@ export const CoveredImage = ({ src, alt = "" }: Props) => {
         alt={alt}
         className="absolute left-1/2 top-1/2 h-full w-auto max-w-none -translate-x-1/2 -translate-y-1/2 object-cover"
         src={src}
-        loading="lazy"
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
       />
       {alt && (
         <>
           <button
             className="border-cax-border bg-cax-surface-raised/90 text-cax-text-muted hover:bg-cax-surface absolute right-1 bottom-1 rounded-full border px-2 py-1 text-center text-xs"
             type="button"
-            onClick={() => { (document.getElementById(dialogId) as HTMLDialogElement)?.showModal(); }}
+            command="show-modal"
+            commandfor={dialogId}
           >
             ALT を表示する
           </button>
@@ -35,7 +38,7 @@ export const CoveredImage = ({ src, alt = "" }: Props) => {
             <div className="grid gap-y-6">
               <h1 className="text-center text-2xl font-bold">画像の説明</h1>
               <p className="text-sm">{alt}</p>
-              <Button variant="secondary" onClick={() => { (document.getElementById(dialogId) as HTMLDialogElement)?.close(); }}>
+              <Button variant="secondary" command="close" commandfor={dialogId}>
                 閉じる
               </Button>
             </div>
