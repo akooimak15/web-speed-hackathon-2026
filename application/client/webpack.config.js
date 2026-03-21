@@ -125,7 +125,7 @@ const config = {
   },
   optimization: {
     minimize: true,
-    splitChunks: { chunks: "all" },
+    splitChunks: { chunks: "async" },
     concatenateModules: true,
     usedExports: true,
     providedExports: true,
