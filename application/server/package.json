@@ -19,6 +19,8 @@
     "body-parser": "2.2.0",
     "connect-history-api-fallback": "2.0.0",
     "express": "5.1.0",
+    "react": "19.1.0",
+    "react-dom": "19.1.0",
     "compression": "1.7.5",
     "express-session": "1.18.2",
     "file-type": "21.1.1",
