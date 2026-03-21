@@ -11,7 +11,6 @@ app.set("trust proxy", true);
 app.use(compression());
 app.use(sessionMiddleware);
 
-// gzip圧縮されたJSONを解凍
 app.use((req, _res, next) => {
   if (req.headers["content-encoding"] === "gzip") {
     const gunzip = createGunzip();
@@ -31,8 +30,13 @@ app.use((req, _res, next) => {
 app.use(Express.json());
 app.use(Express.raw({ limit: "10mb" }));
 
-app.use("/api/v1", (_req, res, next) => {
-  res.header("Cache-Control", "no-store");
+// 認証不要な読み取りAPIにキャッシュを設定
+app.use("/api/v1", (req, res, next) => {
+  if (req.method === "GET" && !req.path.startsWith("/me") && !req.path.startsWith("/dm")) {
+    res.header("Cache-Control", "public, max-age=10, stale-while-revalidate=60");
+  } else {
+    res.header("Cache-Control", "no-store");
+  }
   return next();
 });
 
