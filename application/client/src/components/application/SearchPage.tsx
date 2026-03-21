@@ -53,7 +53,7 @@ const SearchPageComponent = ({
     }
 
     let isMounted = true;
-    analyzeSentiment(parsed.keywords)
+    import("@web-speed-hackathon-2026/client/src/utils/negaposi_analyzer").then(m => m.analyzeSentiment(parsed.keywords))
       .then((result) => {
         if (isMounted) {
           setIsNegative(result.label === "negative");
