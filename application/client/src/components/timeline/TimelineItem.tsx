@@ -58,6 +58,8 @@ export const TimelineItem = ({ post }: Props) => {
               loading="lazy"
               alt={post.user.profileImage.alt}
               src={getProfileImagePath(post.user.profileImage.id)}
+              width={48}
+              height={48}
             />
           </Link>
         </div>
