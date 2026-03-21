@@ -27,8 +27,7 @@ export const CoveredImage = ({ src, alt = "" }: Props) => {
           <button
             className="border-cax-border bg-cax-surface-raised/90 text-cax-text-muted hover:bg-cax-surface absolute right-1 bottom-1 rounded-full border px-2 py-1 text-center text-xs"
             type="button"
-            command="show-modal"
-            commandfor={dialogId}
+            onClick={() => { (document.getElementById(dialogId) as HTMLDialogElement)?.showModal(); }}
           >
             ALT を表示する
           </button>
@@ -36,7 +35,7 @@ export const CoveredImage = ({ src, alt = "" }: Props) => {
             <div className="grid gap-y-6">
               <h1 className="text-center text-2xl font-bold">画像の説明</h1>
               <p className="text-sm">{alt}</p>
-              <Button variant="secondary" command="close" commandfor={dialogId}>
+              <Button variant="secondary" onClick={() => { (document.getElementById(dialogId) as HTMLDialogElement)?.close(); }}>
                 閉じる
               </Button>
             </div>
