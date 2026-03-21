@@ -12,16 +12,16 @@ export const staticRouter = Router();
 // アップロードファイル: 短めのキャッシュ
 staticRouter.use(
   serveStatic(UPLOAD_PATH, {
-    maxAge: "1h",
-    immutable: false,
+    maxAge: "1y",
+    immutable: true,
   }),
 );
 
 // publicアセット: 短めのキャッシュ
 staticRouter.use(
   serveStatic(PUBLIC_PATH, {
-    maxAge: "1h",
-    immutable: false,
+    maxAge: "1y",
+    immutable: true,
   }),
 );
 
